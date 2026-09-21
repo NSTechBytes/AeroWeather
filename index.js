@@ -92,6 +92,7 @@ async function fetchWeather() {
     };
     try { app.storage.set(STORAGE.cachedWeather, cachedWeather); } catch (error) { console.log("AeroWeather could not cache weather:", error); }
     ipcMain.send("AeroWeather.weather", cachedWeather);
+    return cachedWeather;
   } catch (error) { console.log("AeroWeather weather request failed:", error); }
 }
 
@@ -144,8 +145,17 @@ ipcMain.on("AeroWeather.saveSettings", function (event, next) {
   if (SCALE_OPTIONS.indexOf(Number(next.scale)) !== -1) settings.scale = Number(next.scale);
   saveSettings();
   applyAppearance();
-  fetchWeather();
-  ipcMain.send("AeroWeather.settingsSaved", settings);
+  // Refresh the weather widget itself so it synchronously applies the new
+  // size and theme. Give the refreshed UI time to register its IPC listeners,
+  // then publish settings and data just as FluentWidgets does after a style
+  // change.
+  if (weatherWindow && !weatherWindow.isDestroyed()) weatherWindow.refresh();
+  setTimeout(function () {
+    if (!weatherWindow || weatherWindow.isDestroyed()) return;
+    weatherWindow.setSize(Math.round(BASE_WIDTH * settings.scale), Math.round(BASE_HEIGHT * settings.scale));
+    ipcMain.send("AeroWeather.settings", settings);
+    fetchWeather();
+  }, 120);
 });
 
 // Match FluentWidgets: fetch after the widget has been constructed. A UI-ready

@@ -31,9 +31,7 @@ function button(id, text, x, y, width, selected, action) {
     captureLocation();
     action();
   };
-  // Text anchors are baseline-oriented in this runtime. Offset by half of the
-  // label width so each label is visually centered in its button.
-  const centeredTextX = x + width / 2 + text.length * 2.5;
+  const centeredTextX = x + width / 2;
   ui.addShape({
     id: id + "Bg",
     shapeType: "rectangle",
@@ -321,9 +319,3 @@ function save() {
 }
 
 render();
-ipcRenderer.on("AeroWeather.settingsSaved", function (event, next) {
-  if (next) {
-    settings = next;
-    render();
-  }
-});
