@@ -30,6 +30,8 @@ function button(id, text, x, y, width, selected, action) {
   const run = function () {
     captureLocation();
     action();
+    updateSelectionVisuals();
+    applySettings();
   };
   const centeredTextX = x + width / 2;
   ui.addShape({
@@ -48,7 +50,7 @@ function button(id, text, x, y, width, selected, action) {
   ui.addText({
     id: id,
     x: centeredTextX,
-    y: y + 7,
+    y: y + 17,
     width: width,
     height: 20,
     text: text,
@@ -67,6 +69,38 @@ function captureLocation() {
     settings.latitude = ui.getElementProperty("latitude", "text");
   if (ui.isElementExist("longitude"))
     settings.longitude = ui.getElementProperty("longitude", "text");
+}
+
+function applySettings() {
+  ipcRenderer.send("AeroWeather.saveSettings", {
+    latitude: settings.latitude,
+    longitude: settings.longitude,
+    unit: settings.unit,
+    theme: settings.theme,
+    scale: settings.scale,
+  });
+}
+
+function setButtonState(id, selected) {
+  const p = PALETTE[settings.theme];
+  if (ui.isElementExist(id + "Bg")) ui.setElementProperties(id + "Bg", { fillColor: selected ? p.accent : p.card, strokeColor: selected ? p.accent : p.border });
+  if (ui.isElementExist(id)) ui.setElementProperties(id, { fontColor: selected ? "rgb(255,255,255)" : p.text });
+}
+
+function updateSelectionVisuals() {
+  const p = PALETTE[settings.theme];
+  if (ui.isElementExist("panel")) ui.setElementProperties("panel", { fillColor: p.background, strokeColor: p.border });
+  ["title"].forEach(function (id) { if (ui.isElementExist(id)) ui.setElementProperties(id, { fontColor: p.text }); });
+  ["location", "formatLabel", "themeLabel", "sizeLabel"].forEach(function (id) { if (ui.isElementExist(id)) ui.setElementProperties(id, { fontColor: p.accent }); });
+  ["latitudeLabel", "longitudeLabel"].forEach(function (id) { if (ui.isElementExist(id)) ui.setElementProperties(id, { fontColor: p.subtle }); });
+  ["latitude", "longitude"].forEach(function (id) { if (ui.isElementExist(id)) ui.setElementProperties(id, { fillColor: p.card, fontColor: p.text, borderColor: p.border, borderFocusColor: p.accent }); });
+  setButtonState("celsius", settings.unit === "celsius");
+  setButtonState("fahrenheit", settings.unit === "fahrenheit");
+  setButtonState("light", settings.theme === "light");
+  setButtonState("dark", settings.theme === "dark");
+  [0.75, 1, 1.25, 1.5, 1.75, 2].forEach(function (value) {
+    setButtonState("size" + String(value).replace(".", ""), settings.scale === value);
+  });
 }
 
 function render() {
@@ -102,8 +136,6 @@ function render() {
     "size175Bg",
     "size2",
     "size2Bg",
-    "save",
-    "saveBg",
     "status",
   ];
   ids.forEach(function (id) {
@@ -116,7 +148,7 @@ function render() {
     x: 0,
     y: 0,
     width: 370,
-    height: 400,
+    height: 345,
     radius: 12,
     fillColor: p.background,
     strokeColor: p.border,
@@ -189,6 +221,8 @@ function render() {
     borderColor: p.border,
     borderFocusColor: p.accent,
     borderRadius: 6,
+    onEnter: function () { captureLocation(); applySettings(); },
+    onBlur: function () { captureLocation(); applySettings(); },
   });
   ui.addInputBox({
     id: "longitude",
@@ -206,6 +240,8 @@ function render() {
     borderColor: p.border,
     borderFocusColor: p.accent,
     borderRadius: 6,
+    onEnter: function () { captureLocation(); applySettings(); },
+    onBlur: function () { captureLocation(); applySettings(); },
   });
   ui.addText({
     id: "formatLabel",
@@ -230,7 +266,6 @@ function render() {
     settings.unit === "celsius",
     function () {
       settings.unit = "celsius";
-      render();
     },
   );
   button(
@@ -242,7 +277,6 @@ function render() {
     settings.unit === "fahrenheit",
     function () {
       settings.unit = "fahrenheit";
-      render();
     },
   );
   ui.addText({
@@ -268,12 +302,10 @@ function render() {
     settings.theme === "light",
     function () {
       settings.theme = "light";
-      render();
     },
   );
   button("dark", "Dark", 98, 256, 68, settings.theme === "dark", function () {
     settings.theme = "dark";
-    render();
   });
   ui.addText({
     id: "sizeLabel",
@@ -300,22 +332,10 @@ function render() {
       settings.scale === value,
       function () {
         settings.scale = value;
-        render();
       },
     );
   });
-  button("save", "Save changes", 22, 345, 318, true, save);
   ui.endUpdate();
-}
-
-function save() {
-  ipcRenderer.send("AeroWeather.saveSettings", {
-    latitude: settings.latitude,
-    longitude: settings.longitude,
-    unit: settings.unit,
-    theme: settings.theme,
-    scale: settings.scale,
-  });
 }
 
 render();

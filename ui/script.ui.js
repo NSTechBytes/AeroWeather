@@ -24,7 +24,29 @@ function render() {
 function updateWeather(data) {
   if (!data) return;
   weather = data;
-  render();
+  // The first response creates the icon. Every later weather update only
+  // changes existing properties, so the widget never flashes or reloads.
+  if (!ui.isElementExist("icon")) { render(); return; }
+  ui.beginUpdate();
+  ui.setElementProperties("temperature", { text: String(weather.temperature) });
+  ui.setElementProperties("condition", { text: weather.label });
+  ui.setElementProperties("icon", { path: weather.icon });
+  ui.endUpdate();
+}
+
+function applySettings(next) {
+  if (!next) return;
+  settings = next;
+  const s = settings.scale;
+  const c = COLORS[settings.theme];
+  // Update the existing elements rather than removing/recreating them.
+  ui.beginUpdate();
+  if (ui.isElementExist("icon")) ui.setElementProperties("icon", { x: 15 * s, y: 39 * s, width: 41 * s, height: 41 * s });
+  ui.setElementProperties("separator", { x: 61 * s, y: 29 * s, width: Math.max(2, 3 * s), height: 56 * s, fillColor: c.accent });
+  ui.setElementProperties("temperature", { x: 114 * s, y: 42 * s, width: 76 * s, height: 65 * s, fontSize: 53 * s, fontColor: c.main, fontShadow: { x: 0, y: 2 * s, blur: 8 * s, color: c.shadow } });
+  ui.setElementProperties("degree", { x: 151 * s, y: 30 * s, width: 23 * s, height: 25 * s, fontSize: 24 * s, fontColor: c.main });
+  ui.setElementProperties("condition", { x: 109 * s, y: 84 * s, width: 105 * s, height: 21 * s, fontSize: 13 * s, letterSpacing: Math.max(1, 2 * s), fontColor: c.accent });
+  ui.endUpdate();
 }
 
 const startup = ipcRenderer.invoke("AeroWeather.getStartupData");
@@ -33,6 +55,6 @@ if (startup) {
   if (startup.weather) weather = startup.weather;
 }
 render();
-ipcRenderer.on("AeroWeather.settings", function (event, next) { if (next) { settings = next; render(); } });
+ipcRenderer.on("AeroWeather.settings", function (event, next) { applySettings(next); });
 ipcRenderer.on("AeroWeather.weather", function (event, data) { updateWeather(data); });
 ipcRenderer.send("AeroWeather.ready");

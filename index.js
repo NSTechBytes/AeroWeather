@@ -109,7 +109,7 @@ function openSettings() {
   settingsWindow = new widgetWindow({
     id: "AeroWeather.Settings",
     width: 370,
-    height: 400,
+    height: 345,
     script: "ui/settings.ui.js",
     backgroundColor: "rgba(0,0,0,0)",
     draggable: true,
@@ -145,17 +145,11 @@ ipcMain.on("AeroWeather.saveSettings", function (event, next) {
   if (SCALE_OPTIONS.indexOf(Number(next.scale)) !== -1) settings.scale = Number(next.scale);
   saveSettings();
   applyAppearance();
-  // Refresh the weather widget itself so it synchronously applies the new
-  // size and theme. Give the refreshed UI time to register its IPC listeners,
-  // then publish settings and data just as FluentWidgets does after a style
-  // change.
-  if (weatherWindow && !weatherWindow.isDestroyed()) weatherWindow.refresh();
-  setTimeout(function () {
-    if (!weatherWindow || weatherWindow.isDestroyed()) return;
-    weatherWindow.setSize(Math.round(BASE_WIDTH * settings.scale), Math.round(BASE_HEIGHT * settings.scale));
-    ipcMain.send("AeroWeather.settings", settings);
-    fetchWeather();
-  }, 120);
+  // Keep the existing weather window and update it in place.
+  if (!weatherWindow || weatherWindow.isDestroyed()) return;
+  weatherWindow.setSize(Math.round(BASE_WIDTH * settings.scale), Math.round(BASE_HEIGHT * settings.scale));
+  ipcMain.send("AeroWeather.settings", settings);
+  fetchWeather();
 });
 
 // Match FluentWidgets: fetch after the widget has been constructed. A UI-ready
