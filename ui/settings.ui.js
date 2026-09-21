@@ -83,23 +83,54 @@ function applySettings() {
 
 function setButtonState(id, selected) {
   const p = PALETTE[settings.theme];
-  if (ui.isElementExist(id + "Bg")) ui.setElementProperties(id + "Bg", { fillColor: selected ? p.accent : p.card, strokeColor: selected ? p.accent : p.border });
-  if (ui.isElementExist(id)) ui.setElementProperties(id, { fontColor: selected ? "rgb(255,255,255)" : p.text });
+  if (ui.isElementExist(id + "Bg"))
+    ui.setElementProperties(id + "Bg", {
+      fillColor: selected ? p.accent : p.card,
+      strokeColor: selected ? p.accent : p.border,
+    });
+  if (ui.isElementExist(id))
+    ui.setElementProperties(id, {
+      fontColor: selected ? "rgb(255,255,255)" : p.text,
+    });
 }
 
 function updateSelectionVisuals() {
   const p = PALETTE[settings.theme];
-  if (ui.isElementExist("panel")) ui.setElementProperties("panel", { fillColor: p.background, strokeColor: p.border });
-  ["title"].forEach(function (id) { if (ui.isElementExist(id)) ui.setElementProperties(id, { fontColor: p.text }); });
-  ["location", "formatLabel", "themeLabel", "sizeLabel"].forEach(function (id) { if (ui.isElementExist(id)) ui.setElementProperties(id, { fontColor: p.accent }); });
-  ["latitudeLabel", "longitudeLabel"].forEach(function (id) { if (ui.isElementExist(id)) ui.setElementProperties(id, { fontColor: p.subtle }); });
-  ["latitude", "longitude"].forEach(function (id) { if (ui.isElementExist(id)) ui.setElementProperties(id, { fillColor: p.card, fontColor: p.text, borderColor: p.border, borderFocusColor: p.accent }); });
+  if (ui.isElementExist("panel"))
+    ui.setElementProperties("panel", {
+      fillColor: p.background,
+      strokeColor: p.border,
+    });
+  ["title"].forEach(function (id) {
+    if (ui.isElementExist(id))
+      ui.setElementProperties(id, { fontColor: p.text });
+  });
+  ["location", "formatLabel", "themeLabel", "sizeLabel"].forEach(function (id) {
+    if (ui.isElementExist(id))
+      ui.setElementProperties(id, { fontColor: p.accent });
+  });
+  ["latitudeLabel", "longitudeLabel"].forEach(function (id) {
+    if (ui.isElementExist(id))
+      ui.setElementProperties(id, { fontColor: p.subtle });
+  });
+  ["latitude", "longitude"].forEach(function (id) {
+    if (ui.isElementExist(id))
+      ui.setElementProperties(id, {
+        fillColor: p.card,
+        fontColor: p.text,
+        borderColor: p.border,
+        borderFocusColor: p.accent,
+      });
+  });
   setButtonState("celsius", settings.unit === "celsius");
   setButtonState("fahrenheit", settings.unit === "fahrenheit");
   setButtonState("light", settings.theme === "light");
   setButtonState("dark", settings.theme === "dark");
   [0.75, 1, 1.25, 1.5, 1.75, 2].forEach(function (value) {
-    setButtonState("size" + String(value).replace(".", ""), settings.scale === value);
+    setButtonState(
+      "size" + String(value).replace(".", ""),
+      settings.scale === value,
+    );
   });
 }
 
@@ -221,8 +252,14 @@ function render() {
     borderColor: p.border,
     borderFocusColor: p.accent,
     borderRadius: 6,
-    onEnter: function () { captureLocation(); applySettings(); },
-    onBlur: function () { captureLocation(); applySettings(); },
+    onEnter: function () {
+      captureLocation();
+      applySettings();
+    },
+    onBlur: function () {
+      captureLocation();
+      applySettings();
+    },
   });
   ui.addInputBox({
     id: "longitude",
@@ -240,8 +277,14 @@ function render() {
     borderColor: p.border,
     borderFocusColor: p.accent,
     borderRadius: 6,
-    onEnter: function () { captureLocation(); applySettings(); },
-    onBlur: function () { captureLocation(); applySettings(); },
+    onEnter: function () {
+      captureLocation();
+      applySettings();
+    },
+    onBlur: function () {
+      captureLocation();
+      applySettings();
+    },
   });
   ui.addText({
     id: "formatLabel",

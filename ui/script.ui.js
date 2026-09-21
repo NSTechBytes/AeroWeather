@@ -2,8 +2,16 @@ let settings = { theme: "dark", scale: 1 };
 let weather = { temperature: "--", unit: "", label: "", icon: "" };
 
 const COLORS = {
-  light: { main: "rgb(18,22,28)", accent: "rgb(0,126,220)", shadow: "rgba(0,0,0,0.12)" },
-  dark: { main: "rgb(245,248,252)", accent: "rgb(44,157,255)", shadow: "rgba(0,0,0,0.42)" }
+  light: {
+    main: "rgb(18,22,28)",
+    accent: "rgb(0,126,220)",
+    shadow: "rgba(0,0,0,0.12)",
+  },
+  dark: {
+    main: "rgb(245,248,252)",
+    accent: "rgb(44,157,255)",
+    shadow: "rgba(0,0,0,0.42)",
+  },
 };
 
 function render() {
@@ -11,13 +19,72 @@ function render() {
   const c = COLORS[settings.theme];
   const W = 200 * s;
   const H = 120 * s;
-  ["temperature", "degree", "condition", "icon", "separator"].forEach(function (id) { if (ui.isElementExist(id)) ui.removeElementById(id); });
+  ["temperature", "degree", "condition", "icon", "separator"].forEach(
+    function (id) {
+      if (ui.isElementExist(id)) ui.removeElementById(id);
+    },
+  );
   ui.beginUpdate();
-  if (weather.icon) ui.addImage({ id: "icon", x: 15 * s, y: 39 * s, width: 41 * s, height: 41 * s, path: weather.icon });
-  ui.addShape({ id: "separator", shapeType: "rectangle", x: 61 * s, y: 29 * s, width: Math.max(2, 3 * s), height: 56 * s, fillColor: c.accent, strokeWidth: 0 });
-  ui.addText({ id: "temperature", x: 114 * s, y: 42 * s, width: 76 * s, height: 65 * s, text: String(weather.temperature), fontFace: "Segoe UI Light", fontSize: 53 * s, fontWeight: "light", fontColor: c.main, textAlign: "center-center", fontShadow: { x: 0, y: 2 * s, blur: 8 * s, color: c.shadow } });
-  ui.addText({ id: "degree", x: 151 * s, y: 30 * s, width: 23 * s, height: 25 * s, text: "°", fontFace: "Segoe UI", fontSize: 24 * s, fontWeight: "light", fontColor: c.main, textAlign: "center-center" });
-  ui.addText({ id: "condition", x: 76 * s, y: 84 * s, width: 125 * s, height: 21 * s, text: weather.label, fontFace: "Segoe UI", fontSize: 13 * s, fontWeight: "semibold", letterSpacing: Math.max(1, 2 * s), fontColor: c.accent, textAlign: "left-center" });
+  if (weather.icon)
+    ui.addImage({
+      id: "icon",
+      x: 15 * s,
+      y: 39 * s,
+      width: 41 * s,
+      height: 41 * s,
+      path: weather.icon,
+    });
+  ui.addShape({
+    id: "separator",
+    shapeType: "rectangle",
+    x: 61 * s,
+    y: 29 * s,
+    width: Math.max(2, 3 * s),
+    height: 56 * s,
+    fillColor: c.accent,
+    strokeWidth: 0,
+  });
+  ui.addText({
+    id: "temperature",
+    x: 114 * s,
+    y: 42 * s,
+    width: 76 * s,
+    height: 65 * s,
+    text: String(weather.temperature),
+    fontFace: "Segoe UI Light",
+    fontSize: 53 * s,
+    fontWeight: "light",
+    fontColor: c.main,
+    textAlign: "center-center",
+    fontShadow: { x: 0, y: 2 * s, blur: 8 * s, color: c.shadow },
+  });
+  ui.addText({
+    id: "degree",
+    x: 151 * s,
+    y: 30 * s,
+    width: 23 * s,
+    height: 25 * s,
+    text: "°",
+    fontFace: "Segoe UI",
+    fontSize: 24 * s,
+    fontWeight: "light",
+    fontColor: c.main,
+    textAlign: "center-center",
+  });
+  ui.addText({
+    id: "condition",
+    x: 76 * s,
+    y: 84 * s,
+    width: 125 * s,
+    height: 21 * s,
+    text: weather.label,
+    fontFace: "Segoe UI",
+    fontSize: 13 * s,
+    fontWeight: "semibold",
+    letterSpacing: Math.max(1, 2 * s),
+    fontColor: c.accent,
+    textAlign: "left-center",
+  });
   ui.endUpdate();
 }
 
@@ -26,7 +93,10 @@ function updateWeather(data) {
   weather = data;
   // The first response creates the icon. Every later weather update only
   // changes existing properties, so the widget never flashes or reloads.
-  if (!ui.isElementExist("icon")) { render(); return; }
+  if (!ui.isElementExist("icon")) {
+    render();
+    return;
+  }
   ui.beginUpdate();
   ui.setElementProperties("temperature", { text: String(weather.temperature) });
   ui.setElementProperties("condition", { text: weather.label });
@@ -41,11 +111,47 @@ function applySettings(next) {
   const c = COLORS[settings.theme];
   // Update the existing elements rather than removing/recreating them.
   ui.beginUpdate();
-  if (ui.isElementExist("icon")) ui.setElementProperties("icon", { x: 15 * s, y: 39 * s, width: 41 * s, height: 41 * s });
-  ui.setElementProperties("separator", { x: 61 * s, y: 29 * s, width: Math.max(2, 3 * s), height: 56 * s, fillColor: c.accent });
-  ui.setElementProperties("temperature", { x: 114 * s, y: 42 * s, width: 76 * s, height: 65 * s, fontSize: 53 * s, fontColor: c.main, fontShadow: { x: 0, y: 2 * s, blur: 8 * s, color: c.shadow } });
-  ui.setElementProperties("degree", { x: 151 * s, y: 30 * s, width: 23 * s, height: 25 * s, fontSize: 24 * s, fontColor: c.main });
-  ui.setElementProperties("condition", { x: 88 * s, y: 84 * s, width: 125 * s, height: 21 * s, fontSize: 13 * s, letterSpacing: Math.max(1, 2 * s), fontColor: c.accent, textAlign: "left-center" });
+  if (ui.isElementExist("icon"))
+    ui.setElementProperties("icon", {
+      x: 15 * s,
+      y: 39 * s,
+      width: 41 * s,
+      height: 41 * s,
+    });
+  ui.setElementProperties("separator", {
+    x: 61 * s,
+    y: 29 * s,
+    width: Math.max(2, 3 * s),
+    height: 56 * s,
+    fillColor: c.accent,
+  });
+  ui.setElementProperties("temperature", {
+    x: 114 * s,
+    y: 42 * s,
+    width: 76 * s,
+    height: 65 * s,
+    fontSize: 53 * s,
+    fontColor: c.main,
+    fontShadow: { x: 0, y: 2 * s, blur: 8 * s, color: c.shadow },
+  });
+  ui.setElementProperties("degree", {
+    x: 151 * s,
+    y: 30 * s,
+    width: 23 * s,
+    height: 25 * s,
+    fontSize: 24 * s,
+    fontColor: c.main,
+  });
+  ui.setElementProperties("condition", {
+    x: 88 * s,
+    y: 84 * s,
+    width: 125 * s,
+    height: 21 * s,
+    fontSize: 13 * s,
+    letterSpacing: Math.max(1, 2 * s),
+    fontColor: c.accent,
+    textAlign: "left-center",
+  });
   ui.endUpdate();
 }
 
@@ -55,6 +161,10 @@ if (startup) {
   if (startup.weather) weather = startup.weather;
 }
 render();
-ipcRenderer.on("AeroWeather.settings", function (event, next) { applySettings(next); });
-ipcRenderer.on("AeroWeather.weather", function (event, data) { updateWeather(data); });
+ipcRenderer.on("AeroWeather.settings", function (event, next) {
+  applySettings(next);
+});
+ipcRenderer.on("AeroWeather.weather", function (event, data) {
+  updateWeather(data);
+});
 ipcRenderer.send("AeroWeather.ready");
