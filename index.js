@@ -9,10 +9,12 @@ const STORAGE = {
   longitude: "AeroWeather.longitude",
   unit: "AeroWeather.unit",
   theme: "AeroWeather.theme",
-  scale: "AeroWeather.scale"
+  scale: "AeroWeather.scale",
+  cachedWeather: "AeroWeather.cachedWeather"
 };
 
 let settings = { latitude: 51.5072, longitude: -0.1276, unit: "celsius", theme: "dark", scale: 1 };
+let cachedWeather = null;
 let weatherWindow = null;
 let settingsWindow = null;
 let weatherTimer = null;
@@ -29,6 +31,8 @@ function loadSettings() {
     if (unit === "celsius" || unit === "fahrenheit") settings.unit = unit;
     if (theme === "light" || theme === "dark") settings.theme = theme;
     if (SCALE_OPTIONS.indexOf(scale) !== -1) settings.scale = scale;
+    const cached = app.storage.get(STORAGE.cachedWeather, null);
+    if (cached && typeof cached.temperature === "number" && typeof cached.icon === "string") cachedWeather = cached;
   } catch (error) { console.log("AeroWeather could not load settings:", error); }
 }
 
@@ -80,12 +84,14 @@ async function fetchWeather() {
     const raw = await webFetch(url);
     const data = typeof raw === "string" ? JSON.parse(raw) : raw;
     const current = data.current;
-    ipcMain.send("AeroWeather.weather", {
+    cachedWeather = {
       temperature: Math.round(current.temperature_2m),
       unit: settings.unit === "fahrenheit" ? "F" : "C",
       label: weatherLabel(current.weather_code),
       icon: "assets/WeatherIcons/" + weatherIcon(current.weather_code, current.is_day) + ".png"
-    });
+    };
+    try { app.storage.set(STORAGE.cachedWeather, cachedWeather); } catch (error) { console.log("AeroWeather could not cache weather:", error); }
+    ipcMain.send("AeroWeather.weather", cachedWeather);
   } catch (error) { console.log("AeroWeather weather request failed:", error); }
 }
 
@@ -112,6 +118,7 @@ function openSettings() {
 
 loadSettings();
 ipcMain.handle("AeroWeather.getSettings", function () { return settings; });
+ipcMain.handle("AeroWeather.getStartupData", function () { return { settings: settings, weather: cachedWeather }; });
 weatherWindow = new widgetWindow({
   id: "AeroWeather.Window",
   width: Math.round(BASE_WIDTH * settings.scale),
@@ -123,8 +130,6 @@ weatherWindow = new widgetWindow({
   keepOnScreen: true
 });
 weatherWindow.setContextMenu([{ text: "Settings", action: openSettings }]);
-
-ipcMain.on("AeroWeather.ready", function () { applyAppearance(); fetchWeather(); });
 ipcMain.on("AeroWeather.saveSettings", function (event, next) {
   if (!next) return;
   const latitude = Number(next.latitude);
@@ -140,5 +145,9 @@ ipcMain.on("AeroWeather.saveSettings", function (event, next) {
   ipcMain.send("AeroWeather.settingsSaved", settings);
 });
 
+// Match FluentWidgets: fetch after the widget has been constructed. A UI-ready
+// listener registered here can miss an event sent during construction.
+applyAppearance();
+fetchWeather();
 weatherTimer = setInterval(fetchWeather, 600000);
 weatherWindow.on("close", function () { if (weatherTimer) clearInterval(weatherTimer); weatherTimer = null; });

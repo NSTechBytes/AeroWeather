@@ -9,13 +9,19 @@ const PALETTE = {
 
 function button(id, text, x, y, width, selected, action) {
   const p = PALETTE[settings.theme];
-  ui.addShape({ id: id + "Bg", shapeType: "rectangle", x: x, y: y, width: width, height: 34, radius: 6, fillColor: selected ? p.accent : p.card, strokeColor: selected ? p.accent : p.border, strokeWidth: 1, onLeftMouseUp: action });
-  ui.addText({ id: id, x: x + width / 2, y: y + 7, width: width, height: 20, text: text, fontFace: "Segoe UI", fontSize: 12, fontWeight: "semibold", fontColor: selected ? "rgb(255,255,255)" : p.text, textAlign: "center-center", onLeftMouseUp: action, mouseEventCursor: true });
+  const run = function () { captureLocation(); action(); };
+  ui.addShape({ id: id + "Bg", shapeType: "rectangle", x: x, y: y, width: width, height: 34, radius: 6, fillColor: selected ? p.accent : p.card, strokeColor: selected ? p.accent : p.border, strokeWidth: 1, onLeftMouseUp: run });
+  ui.addText({ id: id, x: x + width / 2, y: y + 7, width: width, height: 20, text: text, fontFace: "Segoe UI", fontSize: 12, fontWeight: "semibold", fontColor: selected ? "rgb(255,255,255)" : p.text, textAlign: "center-center", onLeftMouseUp: run, mouseEventCursor: true });
+}
+
+function captureLocation() {
+  if (ui.isElementExist("latitude")) settings.latitude = ui.getElementProperty("latitude", "text");
+  if (ui.isElementExist("longitude")) settings.longitude = ui.getElementProperty("longitude", "text");
 }
 
 function render() {
   const p = PALETTE[settings.theme];
-  const ids = ["panel", "title", "location", "latitudeLabel", "longitudeLabel", "latitude", "longitude", "formatLabel", "celsius", "fahrenheit", "themeLabel", "light", "dark", "sizeLabel", "size075", "size1", "size125", "size15", "size175", "size2", "save", "saveBg", "status"];
+  const ids = ["panel", "title", "location", "latitudeLabel", "longitudeLabel", "latitude", "longitude", "formatLabel", "celsius", "celsiusBg", "fahrenheit", "fahrenheitBg", "themeLabel", "light", "lightBg", "dark", "darkBg", "sizeLabel", "size075", "size075Bg", "size1", "size1Bg", "size125", "size125Bg", "size15", "size15Bg", "size175", "size175Bg", "size2", "size2Bg", "save", "saveBg", "status"];
   ids.forEach(function (id) { if (ui.isElementExist(id)) ui.removeElementById(id); });
   ui.beginUpdate();
   ui.addShape({ id: "panel", shapeType: "rectangle", x: 0, y: 0, width: 370, height: 400, radius: 12, fillColor: p.background, strokeColor: p.border, strokeWidth: 1 });
@@ -39,9 +45,7 @@ function render() {
 }
 
 function save() {
-  const latitude = ui.getElementProperty("latitude", "text");
-  const longitude = ui.getElementProperty("longitude", "text");
-  ipcRenderer.send("AeroWeather.saveSettings", { latitude: latitude, longitude: longitude, unit: settings.unit, theme: settings.theme, scale: settings.scale });
+  ipcRenderer.send("AeroWeather.saveSettings", { latitude: settings.latitude, longitude: settings.longitude, unit: settings.unit, theme: settings.theme, scale: settings.scale });
 }
 
 render();
