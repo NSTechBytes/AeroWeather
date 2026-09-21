@@ -17,7 +17,7 @@ function render() {
   ui.addShape({ id: "separator", shapeType: "rectangle", x: 61 * s, y: 29 * s, width: Math.max(2, 3 * s), height: 56 * s, fillColor: c.accent, strokeWidth: 0 });
   ui.addText({ id: "temperature", x: 114 * s, y: 42 * s, width: 76 * s, height: 65 * s, text: String(weather.temperature), fontFace: "Segoe UI Light", fontSize: 53 * s, fontWeight: "light", fontColor: c.main, textAlign: "center-center", fontShadow: { x: 0, y: 2 * s, blur: 8 * s, color: c.shadow } });
   ui.addText({ id: "degree", x: 151 * s, y: 30 * s, width: 23 * s, height: 25 * s, text: "°", fontFace: "Segoe UI", fontSize: 24 * s, fontWeight: "light", fontColor: c.main, textAlign: "center-center" });
-  ui.addText({ id: "condition", x: 109 * s, y: 84 * s, width: 105 * s, height: 21 * s, text: weather.label, fontFace: "Segoe UI", fontSize: 13 * s, fontWeight: "semibold", letterSpacing: Math.max(1, 2 * s), fontColor: c.accent, textAlign: "center-center" });
+  ui.addText({ id: "condition", x: 76 * s, y: 84 * s, width: 125 * s, height: 21 * s, text: weather.label, fontFace: "Segoe UI", fontSize: 13 * s, fontWeight: "semibold", letterSpacing: Math.max(1, 2 * s), fontColor: c.accent, textAlign: "left-center" });
   ui.endUpdate();
 }
 
@@ -45,7 +45,7 @@ function applySettings(next) {
   ui.setElementProperties("separator", { x: 61 * s, y: 29 * s, width: Math.max(2, 3 * s), height: 56 * s, fillColor: c.accent });
   ui.setElementProperties("temperature", { x: 114 * s, y: 42 * s, width: 76 * s, height: 65 * s, fontSize: 53 * s, fontColor: c.main, fontShadow: { x: 0, y: 2 * s, blur: 8 * s, color: c.shadow } });
   ui.setElementProperties("degree", { x: 151 * s, y: 30 * s, width: 23 * s, height: 25 * s, fontSize: 24 * s, fontColor: c.main });
-  ui.setElementProperties("condition", { x: 109 * s, y: 84 * s, width: 105 * s, height: 21 * s, fontSize: 13 * s, letterSpacing: Math.max(1, 2 * s), fontColor: c.accent });
+  ui.setElementProperties("condition", { x: 88 * s, y: 84 * s, width: 125 * s, height: 21 * s, fontSize: 13 * s, letterSpacing: Math.max(1, 2 * s), fontColor: c.accent, textAlign: "left-center" });
   ui.endUpdate();
 }
 
