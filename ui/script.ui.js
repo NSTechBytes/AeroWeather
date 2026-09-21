@@ -73,7 +73,7 @@ function render() {
   });
   ui.addText({
     id: "condition",
-    x: 76 * s,
+    x: 88 * s,
     y: 84 * s,
     width: 125 * s,
     height: 21 * s,
