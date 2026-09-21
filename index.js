@@ -98,6 +98,9 @@ async function fetchWeather() {
 function applyAppearance() {
   weatherWindow.setSize(Math.round(BASE_WIDTH * settings.scale), Math.round(BASE_HEIGHT * settings.scale));
   ipcMain.send("AeroWeather.settings", settings);
+  // Immediately repaint from the last successful result while the fresh
+  // location request is in flight, so theme/size changes are visible at once.
+  if (cachedWeather) ipcMain.send("AeroWeather.weather", cachedWeather);
 }
 
 function openSettings() {
