@@ -101,6 +101,8 @@ function updateSelectionVisuals() {
       fillColor: p.background,
       strokeColor: p.border,
     });
+  if (ui.isElementExist("closeButton")) ui.setElementProperties("closeButton", { fillColor: p.card, strokeColor: p.border });
+  if (ui.isElementExist("closeGlyph")) ui.setElementProperties("closeGlyph", { fontColor: p.subtle });
   ["title"].forEach(function (id) {
     if (ui.isElementExist(id))
       ui.setElementProperties(id, { fontColor: p.text });
@@ -139,6 +141,8 @@ function render() {
   const ids = [
     "panel",
     "title",
+    "closeButton",
+    "closeGlyph",
     "location",
     "latitudeLabel",
     "longitudeLabel",
@@ -198,6 +202,8 @@ function render() {
     fontColor: p.text,
     textAlign: "left-center",
   });
+  ui.addShape({ id: "closeButton", shapeType: "ellipse", x: 332, y: 15, width: 22, height: 22, fillColor: p.card, strokeColor: p.border, strokeWidth: 1, mouseEventCursor: true, onLeftMouseUp: function () { ipcRenderer.send("AeroWeather.closeSettings"); } });
+  ui.addText({ id: "closeGlyph", x: 343, y: 24, width: 22, height: 22, text: "×", fontFace: "Segoe UI", fontSize: 16, fontWeight: "normal", fontColor: p.subtle, textAlign: "centercenter", mouseEventCursor: true, onLeftMouseUp: function () { ipcRenderer.send("AeroWeather.closeSettings"); } });
   ui.addText({
     id: "location",
     x: 22,

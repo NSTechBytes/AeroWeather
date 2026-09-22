@@ -11,6 +11,7 @@ const STORAGE = {
   theme: "AeroWeather.theme",
   scale: "AeroWeather.scale",
   cachedWeather: "AeroWeather.cachedWeather",
+  settingsWindowOpen: "AeroWeather.settingsWindowOpen",
 };
 
 let settings = {
@@ -24,6 +25,7 @@ let cachedWeather = null;
 let weatherWindow = null;
 let settingsWindow = null;
 let weatherTimer = null;
+let restoreSettingsWindow = false;
 
 function loadSettings() {
   try {
@@ -32,6 +34,7 @@ function loadSettings() {
     const unit = app.storage.get(STORAGE.unit, settings.unit);
     const theme = app.storage.get(STORAGE.theme, settings.theme);
     const scale = app.storage.get(STORAGE.scale, settings.scale);
+    restoreSettingsWindow = app.storage.get(STORAGE.settingsWindowOpen, false) === true;
     if (typeof latitude === "number" && latitude >= -90 && latitude <= 90)
       settings.latitude = latitude;
     if (typeof longitude === "number" && longitude >= -180 && longitude <= 180)
@@ -157,6 +160,7 @@ function openSettings() {
     script: "ui/settings.ui.js",
     backgroundColor: "rgba(0,0,0,0)",
   });
+  try { app.storage.set(STORAGE.settingsWindowOpen, true); } catch (error) { console.log("AeroWeather could not save settings-window state:", error); }
   settingsWindow.disableContextMenu(true);
   settingsWindow.on("closed", function () {
     settingsWindow = null;
@@ -170,6 +174,10 @@ ipcMain.handle("AeroWeather.getSettings", function () {
 ipcMain.handle("AeroWeather.getStartupData", function () {
   return { settings: settings, weather: cachedWeather };
 });
+ipcMain.on("AeroWeather.closeSettings", function () {
+  try { app.storage.set(STORAGE.settingsWindowOpen, false); } catch (error) { console.log("AeroWeather could not save settings-window state:", error); }
+  if (settingsWindow && !settingsWindow.isDestroyed()) settingsWindow.close();
+});
 weatherWindow = new widgetWindow({
   id: "AeroWeather.Window",
   width: Math.round(BASE_WIDTH * settings.scale),
@@ -181,6 +189,7 @@ weatherWindow = new widgetWindow({
   keepOnScreen: true,
 });
 weatherWindow.setContextMenu([{ text: "Settings", action: openSettings }]);
+if (restoreSettingsWindow) openSettings();
 ipcMain.on("AeroWeather.saveSettings", function (event, next) {
   if (!next) return;
   const latitude = Number(next.latitude);
