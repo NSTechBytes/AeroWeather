@@ -37,7 +37,7 @@ function render() {
   ui.addShape({
     id: "separator",
     shapeType: "rectangle",
-    x: 61 * s,
+    x: 68 * s,
     y: 29 * s,
     width: Math.max(2, 3 * s),
     height: 56 * s,
@@ -119,7 +119,7 @@ function applySettings(next) {
       height: 41 * s,
     });
   ui.setElementProperties("separator", {
-    x: 61 * s,
+    x: 68 * s,
     y: 29 * s,
     width: Math.max(2, 3 * s),
     height: 56 * s,

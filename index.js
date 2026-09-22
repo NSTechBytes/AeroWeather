@@ -156,9 +156,6 @@ function openSettings() {
     height: 345,
     script: "ui/settings.ui.js",
     backgroundColor: "rgba(0,0,0,0)",
-    draggable: true,
-    showInToolbar: true,
-    toolbarTitle: "AeroWeather Settings",
   });
   settingsWindow.disableContextMenu(true);
   settingsWindow.on("closed", function () {
