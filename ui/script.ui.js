@@ -3,14 +3,14 @@ let weather = { temperature: "--", unit: "", label: "", icon: "" };
 
 const COLORS = {
   light: {
-    main: "rgb(18,22,28)",
+    main: "rgb(0,0,0)",
     accent: "rgb(0,126,220)",
-    shadow: "rgba(0,0,0,0.12)",
+    shadow: "rgba(0,0,0,1)",
   },
   dark: {
     main: "rgb(245,248,252)",
     accent: "rgb(44,157,255)",
-    shadow: "rgba(0,0,0,0.42)",
+    shadow: "rgba(0,0,0,1)",
   },
 };
 
