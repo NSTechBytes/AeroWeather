@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2026 nstechbytes
+ *
+ * Licensed under the Apache License, Version 2.0.
+ * You may obtain a copy of the License at:
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { app, widgetWindow } from "novadesk";
 import { webFetch } from "system";
 
@@ -34,7 +48,8 @@ function loadSettings() {
     const unit = app.storage.get(STORAGE.unit, settings.unit);
     const theme = app.storage.get(STORAGE.theme, settings.theme);
     const scale = app.storage.get(STORAGE.scale, settings.scale);
-    restoreSettingsWindow = app.storage.get(STORAGE.settingsWindowOpen, false) === true;
+    restoreSettingsWindow =
+      app.storage.get(STORAGE.settingsWindowOpen, false) === true;
     if (typeof latitude === "number" && latitude >= -90 && latitude <= 90)
       settings.latitude = latitude;
     if (typeof longitude === "number" && longitude >= -180 && longitude <= 180)
@@ -160,7 +175,11 @@ function openSettings() {
     script: "ui/settings.ui.js",
     backgroundColor: "rgba(0,0,0,0)",
   });
-  try { app.storage.set(STORAGE.settingsWindowOpen, true); } catch (error) { console.log("AeroWeather could not save settings-window state:", error); }
+  try {
+    app.storage.set(STORAGE.settingsWindowOpen, true);
+  } catch (error) {
+    console.log("AeroWeather could not save settings-window state:", error);
+  }
   settingsWindow.disableContextMenu(true);
   settingsWindow.on("closed", function () {
     settingsWindow = null;
@@ -175,7 +194,11 @@ ipcMain.handle("AeroWeather.getStartupData", function () {
   return { settings: settings, weather: cachedWeather };
 });
 ipcMain.on("AeroWeather.closeSettings", function () {
-  try { app.storage.set(STORAGE.settingsWindowOpen, false); } catch (error) { console.log("AeroWeather could not save settings-window state:", error); }
+  try {
+    app.storage.set(STORAGE.settingsWindowOpen, false);
+  } catch (error) {
+    console.log("AeroWeather could not save settings-window state:", error);
+  }
   if (settingsWindow && !settingsWindow.isDestroyed()) settingsWindow.close();
 });
 weatherWindow = new widgetWindow({

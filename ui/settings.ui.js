@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2026 nstechbytes
+ *
+ * Licensed under the Apache License, Version 2.0.
+ * You may obtain a copy of the License at:
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 let settings = ipcRenderer.invoke("AeroWeather.getSettings") || {
   latitude: 51.5072,
   longitude: -0.1276,
@@ -101,8 +115,13 @@ function updateSelectionVisuals() {
       fillColor: p.background,
       strokeColor: p.border,
     });
-  if (ui.isElementExist("closeButton")) ui.setElementProperties("closeButton", { fillColor: p.card, strokeColor: p.border });
-  if (ui.isElementExist("closeGlyph")) ui.setElementProperties("closeGlyph", { fontColor: p.subtle });
+  if (ui.isElementExist("closeButton"))
+    ui.setElementProperties("closeButton", {
+      fillColor: p.card,
+      strokeColor: p.border,
+    });
+  if (ui.isElementExist("closeGlyph"))
+    ui.setElementProperties("closeGlyph", { fontColor: p.subtle });
   ["title"].forEach(function (id) {
     if (ui.isElementExist(id))
       ui.setElementProperties(id, { fontColor: p.text });
@@ -202,8 +221,38 @@ function render() {
     fontColor: p.text,
     textAlign: "left-center",
   });
-  ui.addShape({ id: "closeButton", shapeType: "ellipse", x: 332, y: 15, width: 22, height: 22, fillColor: p.card, strokeColor: p.border, strokeWidth: 1, mouseEventCursor: true, onLeftMouseUp: function () { ipcRenderer.send("AeroWeather.closeSettings"); } });
-  ui.addText({ id: "closeGlyph", x: 343, y: 24, width: 22, height: 22, text: "×", fontFace: "Segoe UI", fontSize: 16, fontWeight: "normal", fontColor: p.subtle, textAlign: "centercenter", mouseEventCursor: true, onLeftMouseUp: function () { ipcRenderer.send("AeroWeather.closeSettings"); } });
+  ui.addShape({
+    id: "closeButton",
+    shapeType: "ellipse",
+    x: 332,
+    y: 15,
+    width: 22,
+    height: 22,
+    fillColor: p.card,
+    strokeColor: p.border,
+    strokeWidth: 1,
+    mouseEventCursor: true,
+    onLeftMouseUp: function () {
+      ipcRenderer.send("AeroWeather.closeSettings");
+    },
+  });
+  ui.addText({
+    id: "closeGlyph",
+    x: 343,
+    y: 24,
+    width: 22,
+    height: 22,
+    text: "×",
+    fontFace: "Segoe UI",
+    fontSize: 16,
+    fontWeight: "normal",
+    fontColor: p.subtle,
+    textAlign: "centercenter",
+    mouseEventCursor: true,
+    onLeftMouseUp: function () {
+      ipcRenderer.send("AeroWeather.closeSettings");
+    },
+  });
   ui.addText({
     id: "location",
     x: 22,
@@ -254,7 +303,7 @@ function render() {
     fontSize: 14,
     fontColor: p.text,
     align: "left",
-    padding: [10,0],
+    padding: [10, 0],
     fillColor: p.card,
     borderWidth: 1,
     borderColor: p.border,
@@ -281,7 +330,7 @@ function render() {
     fontSize: 14,
     fontColor: p.text,
     fillColor: p.card,
-    padding: [10,0],
+    padding: [10, 0],
     borderWidth: 1,
     borderColor: p.border,
     borderFocusColor: p.accent,
