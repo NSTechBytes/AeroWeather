@@ -6,8 +6,10 @@
   "author": "NSTechBytes",
   "description": "A transparent, compact weather widget with local weather icons and configurable location.",
   "icon": "assets/icon.ico",
-  "preview": "defaultPreview.png",
-  "excludeItems": [],
+  "preview": "Preview.png",
+  "excludeItems": [
+    ".git","dist"
+  ],
   "setup": {
     "createDesktopShortcut": true,
     "createStartupShortcut": false,
