@@ -38,7 +38,7 @@ Key features include:
 
 Download the latest widget package (`.ndpkg`) from the project releases:
 
-[Download AeroWeather_v1.0.0.0.ndpkg](https://github.com/NSTechBytes/AeroWeather/releases)
+[Download AeroWeather_v1.0.ndpkg](https://github.com/NSTechBytes/AeroWeather/releases)
 
 Double-click the downloaded `.ndpkg` file to install it directly with Novadesk. Novadesk must be installed before opening the package.
 

@@ -1,7 +1,7 @@
 {
   "name": "AeroWeather",
   "main": "index.js",
-  "version": "1.0.0.0",
+  "version": "1.0",
   "minimumNovadeskVersion": "0.9.11.0",
   "author": "NSTechBytes",
   "description": "A transparent, compact weather widget with local weather icons and configurable location.",
